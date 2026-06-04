@@ -1,0 +1,37 @@
+# Hyrax Labs — containerized demo.
+# Brings up the JVM backend ingestion cycle, runs the Python ingestion pipeline
+# once to produce a catalog, and serves the metrics dashboard.
+# All data is synthetic; no external network access is required.
+#
+# Usage:
+#   docker compose up --build
+#   # dashboard -> http://localhost:5173
+services:
+  ingestion-pipeline:
+    build:
+      context: ./services/ingestion-pipeline
+    image: hyrax/ingestion-pipeline
+    volumes:
+      - catalog:/data
+    command: ["hyrax-ingest", "--fetcher", "soup", "--output", "/data/catalog.json"]
+
+  backend-jvm:
+    build:
+      context: ./services/backend-jvm
+    image: hyrax/backend-jvm
+    depends_on:
+      ingestion-pipeline:
+        condition: service_completed_successfully
+    command: ["./gradlew", "run", "--no-daemon", "-q"]
+
+  metrics-dashboard:
+    build:
+      context: ./services/metrics-dashboard
+    image: hyrax/metrics-dashboard
+    ports:
+      - "5173:5173"
+      - "8787:8787"
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+volumes:
+  catalog:

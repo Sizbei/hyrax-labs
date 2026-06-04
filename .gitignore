@@ -1,0 +1,42 @@
+# ── OS / editor ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# ── JVM / Gradle (services/backend-jvm) ───────────────────────
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+*.class
+*.log
+.kotlin/
+
+# ── Python (services/ingestion-pipeline) ──────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+out/
+
+# ── Node (services/metrics-dashboard) ─────────────────────────
+node_modules/
+**/dist/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
+# ── Generated demo artifacts ──────────────────────────────────
+catalog.json
+catalog.jsonl
+*.catalog.json
+.demo-output/

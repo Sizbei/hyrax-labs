@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hyrax-ingestion"
+version = "0.1.0"
+description = "Multi-tool supplier-material ingestion pipeline that normalizes scraped listings into a PBR-texture catalog."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Hyrax Labs" }]
+keywords = ["ingestion", "scraping", "pbr", "textures", "etl", "data-engineering"]
+
+dependencies = [
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "requests>=2.31",
+    "pydantic>=2.6,<3",
+]
+
+[project.optional-dependencies]
+# Heavyweight browser-automation backends are opt-in so the core pipeline
+# runs against local fixtures without any browser install.
+playwright = ["playwright>=1.44"]
+selenium = ["selenium>=4.20"]
+crawlee = ["crawlee>=0.3"]
+# Convenience: install every browser backend at once.
+browsers = ["playwright>=1.44", "selenium>=4.20", "crawlee>=0.3"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]
+
+[project.scripts]
+hyrax-ingest = "hyrax_ingestion.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+hyrax_ingestion = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["hyrax_ingestion"]
+branch = true

@@ -1,0 +1,41 @@
+{
+  "name": "metrics-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Real-time content performance dashboard (React + D3.js) tracking 15+ engagement metrics across 100+ synthetic assets.",
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run server\" \"vite\"",
+    "server": "node server/index.js",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "express": "^4.21.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/d3": "^7.4.3",
+    "@types/express": "^5.0.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^3.2.6"
+  }
+}

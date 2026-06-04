@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- SYNTHETIC FIXTURE. A "mirror"/syndicated page that re-lists one of
+     Aurora Surfaces' materials with identical texture URLs. Exists to exercise
+     content-hash deduplication across pages. Not a real supplier. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="supplier" content="Aurora Surfaces" />
+  <title>Aurora Surfaces — Featured (sample mirror)</title>
+</head>
+<body>
+  <h1>Aurora Surfaces — Featured Materials</h1>
+
+  <!-- Duplicate of Weathered Granite 03 from aurora-surfaces.html:
+       same supplier, same name, same texture URLs => deduped. -->
+  <article class="material" data-category="stone">
+    <h2 class="material-name">Weathered Granite 03</h2>
+    <ul class="material-meta">
+      <li data-field="resolution">Resolution: 4096x4096</li>
+      <li data-field="size">Tile size: 200 cm</li>
+    </ul>
+    <ul class="material-tags">
+      <li>granite</li><li>featured</li>
+    </ul>
+    <ul class="texture-maps">
+      <li><a class="map-link" data-map="albedo" href="/assets/weathered-granite-03/albedo.png">Base Color</a></li>
+      <li><a class="map-link" data-map="normal" href="/assets/weathered-granite-03/normal.png">Normal</a></li>
+      <li><a class="map-link" data-map="roughness" href="/assets/weathered-granite-03/roughness.png">Roughness</a></li>
+      <li><a class="map-link" data-map="ao" href="/assets/weathered-granite-03/ao.png">Ambient Occlusion</a></li>
+    </ul>
+  </article>
+
+  <article class="material" data-category="plaster">
+    <h2 class="material-name">Venetian Plaster Cream</h2>
+    <ul class="material-meta">
+      <li data-field="resolution">Resolution: 2048x2048</li>
+      <li data-field="size">Tile size: 100 cm</li>
+    </ul>
+    <ul class="material-tags">
+      <li>plaster</li><li>wall</li><li>interior</li>
+    </ul>
+    <ul class="texture-maps">
+      <li><a class="map-link" data-map="albedo" href="/assets/venetian-plaster-cream/albedo.png">Albedo</a></li>
+      <li><a class="map-link" data-map="normal" href="/assets/venetian-plaster-cream/normal.png">Normal</a></li>
+      <li><a class="map-link" data-map="roughness" href="/assets/venetian-plaster-cream/roughness.png">Roughness</a></li>
+    </ul>
+  </article>
+</body>
+</html>

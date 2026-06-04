@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- SYNTHETIC FIXTURE. Not a real supplier. No real URLs are fetched. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="supplier" content="Everest Stone" />
+  <title>Everest Stone — Catalog (sample)</title>
+</head>
+<body>
+  <h1>Everest Stone</h1>
+
+  <article class="material" data-category="stone">
+    <h2 class="material-name">Slate Roof Tiles</h2>
+    <ul class="material-meta">
+      <li data-field="resolution">Resolution: 4096x4096</li>
+      <li data-field="size">Tile size: 120 cm</li>
+    </ul>
+    <ul class="material-tags">
+      <li>slate</li><li>roof</li><li>exterior</li>
+    </ul>
+    <ul class="texture-maps">
+      <li><a class="map-link" data-map="albedo" href="/library/slate-roof-tiles/color.png">Color</a></li>
+      <li><a class="map-link" data-map="normal" href="/library/slate-roof-tiles/normal.png">Normal</a></li>
+      <li><a class="map-link" data-map="roughness" href="/library/slate-roof-tiles/roughness.png">Roughness</a></li>
+      <li><a class="map-link" data-map="ao" href="/library/slate-roof-tiles/ao.png">Occlusion</a></li>
+    </ul>
+  </article>
+
+  <!-- Malformed card (no name): extractor must skip it without crashing. -->
+  <article class="material" data-category="stone">
+    <ul class="material-meta">
+      <li data-field="resolution">Resolution: 2K</li>
+    </ul>
+    <ul class="texture-maps">
+      <li><a class="map-link" data-map="albedo" href="/library/orphan/color.png">Color</a></li>
+    </ul>
+  </article>
+</body>
+</html>
