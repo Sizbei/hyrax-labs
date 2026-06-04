@@ -11,6 +11,7 @@
  */
 import { METRICS } from "../data/metricsCatalog.ts";
 import {
+  ASSET_COUNT,
   DEFAULT_SEED,
   aggregate,
   generateAssets,
@@ -21,7 +22,38 @@ import {
 import type { Asset, LiveTick, MetricDef, TimeSeries } from "../types";
 import type { SnapshotResponse } from "./client";
 
-const assets: Asset[] = generateAssets(DEFAULT_SEED);
+const generated: Asset[] = generateAssets(DEFAULT_SEED);
+
+// Assets default to the generated set, but may be augmented at load time with a
+// real ingestion-pipeline seed (assets-seed.json) so the live dashboard shows
+// the actual scraped supplier-material names — the end-to-end flow, in browser.
+let assets: Asset[] = generated;
+
+/**
+ * Try to load an ingestion-pipeline asset seed and prepend it to the generated
+ * assets (kept to ASSET_COUNT total). No-ops if the file is absent or invalid.
+ * Idempotent; safe to call once at startup.
+ */
+export async function hydrateFromSeed(
+  url = `${import.meta.env.BASE_URL}assets-seed.json`,
+): Promise<number> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return 0;
+    const seed = (await res.json()) as Asset[];
+    if (!Array.isArray(seed) || seed.length === 0) return 0;
+    const seeded = seed.filter(
+      (a) => a && typeof a.id === "string" && typeof a.title === "string",
+    );
+    if (seeded.length === 0) return 0;
+    const seededIds = new Set(seeded.map((a) => a.id));
+    const filler = generated.filter((a) => !seededIds.has(a.id));
+    assets = [...seeded, ...filler].slice(0, Math.max(ASSET_COUNT, seeded.length));
+    return seeded.length;
+  } catch {
+    return 0; // network/JSON failure → keep generated assets
+  }
+}
 
 export const staticSource = {
   metrics(): MetricDef[] {

@@ -9,6 +9,7 @@ on:
     branches: [main]
     paths:
       - "services/metrics-dashboard/**"
+      - "services/ingestion-pipeline/**"
       - ".github/workflows/deploy-dashboard.yml"
   workflow_dispatch:
 
@@ -30,6 +31,17 @@ jobs:
         working-directory: services/metrics-dashboard
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate asset seed from the ingestion pipeline
+        run: |
+          cd services/ingestion-pipeline
+          pip install -e .
+          hyrax-ingest --fetcher soup \
+            --output /tmp/catalog.json \
+            --asset-seed "$GITHUB_WORKSPACE/services/metrics-dashboard/public/assets-seed.json"
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

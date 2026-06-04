@@ -1,0 +1,72 @@
+[
+  {
+    "id": "e9b7ab3d9be33f5b",
+    "title": "Weathered Granite 03",
+    "type": "short",
+    "channel": "Aurora Surfaces",
+    "publishedAt": "2025-05-03"
+  },
+  {
+    "id": "65fdfff3bb049d89",
+    "title": "Venetian Plaster Cream",
+    "type": "image",
+    "channel": "Aurora Surfaces",
+    "publishedAt": "2025-03-03"
+  },
+  {
+    "id": "53232bfd6ee4d05e",
+    "title": "Brushed Steel Panel",
+    "type": "carousel",
+    "channel": "Aurora Surfaces",
+    "publishedAt": "2025-10-11"
+  },
+  {
+    "id": "13673a819613bd97",
+    "title": "Oak Planks Worn",
+    "type": "carousel",
+    "channel": "Basalt Textures Co",
+    "publishedAt": "2025-04-05"
+  },
+  {
+    "id": "1822bf900be2b895",
+    "title": "Linen Weave Natural",
+    "type": "short",
+    "channel": "Basalt Textures Co",
+    "publishedAt": "2025-05-03"
+  },
+  {
+    "id": "307cfd7bf54fe7e3",
+    "title": "Polished Concrete Floor",
+    "type": "short",
+    "channel": "Cobalt Materials",
+    "publishedAt": "2025-01-20"
+  },
+  {
+    "id": "2a7058723324f032",
+    "title": "Glazed Hex Tile Teal",
+    "type": "article",
+    "channel": "Cobalt Materials",
+    "publishedAt": "2025-11-14"
+  },
+  {
+    "id": "2a23e0920200120a",
+    "title": "Slate Roof Tiles",
+    "type": "image",
+    "channel": "Everest Stone",
+    "publishedAt": "2025-05-28"
+  },
+  {
+    "id": "70d3f390ac7f94e7",
+    "title": "Desert Sand Ripples",
+    "type": "video",
+    "channel": "Dune Supply",
+    "publishedAt": "2025-12-26"
+  },
+  {
+    "id": "cf7e3b31e449b93f",
+    "title": "Cracked Mud Flat",
+    "type": "article",
+    "channel": "Dune Supply",
+    "publishedAt": "2025-02-11"
+  }
+]

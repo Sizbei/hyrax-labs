@@ -35,7 +35,16 @@ export default function App() {
   const { status, ticks, latest } = useLiveStream(60);
 
   useEffect(() => {
-    Promise.all([api.metrics(), api.assets(), api.snapshot()])
+    // In static mode, optionally hydrate assets from a real ingestion-pipeline
+    // seed before the first snapshot so scraped material names appear.
+    const boot = async () => {
+      if (IS_STATIC) {
+        const { hydrateFromSeed } = await import("./api/staticSource");
+        await hydrateFromSeed();
+      }
+      return Promise.all([api.metrics(), api.assets(), api.snapshot()]);
+    };
+    boot()
       .then(([m, a, s]) => {
         setMetrics(m);
         setAssets(a);
