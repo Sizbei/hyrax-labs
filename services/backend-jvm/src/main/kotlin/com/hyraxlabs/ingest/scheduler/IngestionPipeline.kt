@@ -7,11 +7,12 @@ import com.hyraxlabs.ingest.partner.PartnerApiException
 import com.hyraxlabs.ingest.partner.PartnerRegistry
 import com.hyraxlabs.ingest.pipeline.Deduplicator
 import com.hyraxlabs.ingest.pipeline.MaterialNormalizer
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 
@@ -38,7 +39,9 @@ class IngestionPipeline(
      * Runs one full ingestion cycle across all registered partners concurrently
      * and returns the deduplicated, normalized materials.
      */
-    suspend fun runCycle(): List<Material> = coroutineScope {
+    suspend fun runCycle(): List<Material> = supervisorScope {
+        // supervisorScope (not coroutineScope) so one partner's failure cannot
+        // cancel its siblings — failure isolation is the documented contract.
         val perPartner = registry.all().map { client ->
             async(ioDispatcher) { ingestPartner(client) }
         }.awaitAll()
@@ -63,7 +66,14 @@ class IngestionPipeline(
             jobQueue.update(job.id) { it.completed(materials.size) }
             log.info("Partner '{}' ingested {} materials", client.source, materials.size)
             materials
-        } catch (ex: PartnerApiException) {
+        } catch (ex: CancellationException) {
+            // Never swallow cancellation — let structured concurrency propagate it.
+            jobQueue.update(job.id) { it.failed("cancelled") }
+            throw ex
+        } catch (ex: Exception) {
+            // Any partner-side failure (declared PartnerApiException or an
+            // unexpected runtime error) is recorded and isolated, never aborting
+            // the rest of the cycle.
             jobQueue.update(job.id) { it.failed(ex.message ?: "partner feed error") }
             log.error("Partner '{}' ingestion failed: {}", client.source, ex.message)
             emptyList()

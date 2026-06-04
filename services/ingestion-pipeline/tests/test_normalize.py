@@ -53,6 +53,12 @@ def test_basecolor_not_shadowed_by_col() -> None:
         ("4096", 4096),
         (None, None),
         ("n/a", None),
+        # Mixed tokens: explicit pixel dimensions win over an embedded "k"
+        # shorthand (e.g. a small preview label), so real dims aren't overridden.
+        ("1024 x 768, 2k thumb", 1024),
+        ("1920x1080 (preview)", 1920),
+        # Pure shorthand still resolves when no explicit dimensions are present.
+        ("4k preview only", 4096),
     ],
 )
 def test_parse_resolution(raw, expected) -> None:

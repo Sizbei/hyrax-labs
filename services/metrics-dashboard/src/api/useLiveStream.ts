@@ -4,7 +4,7 @@
  * Maintains a rolling window of recent aggregate ticks so charts can animate
  * the "real-time" claim. Falls back gracefully if the stream disconnects.
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { LiveTick } from "../types";
 import { api } from "./client";
 
@@ -19,11 +19,9 @@ export interface LiveStreamState {
 export function useLiveStream(windowSize = 60): LiveStreamState {
   const [status, setStatus] = useState<StreamStatus>("connecting");
   const [ticks, setTicks] = useState<LiveTick[]>([]);
-  const sourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
     const source = new EventSource(api.streamUrl());
-    sourceRef.current = source;
 
     source.onopen = () => setStatus("live");
     source.onmessage = (event) => {
@@ -42,7 +40,6 @@ export function useLiveStream(windowSize = 60): LiveStreamState {
 
     return () => {
       source.close();
-      sourceRef.current = null;
     };
   }, [windowSize]);
 

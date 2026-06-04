@@ -6,12 +6,17 @@ Integrity rule: synthetic/sample data only; no real proprietary code, vendor nam
 
 ## Stages
 
-- [ ] **S1 — Monorepo glue**: root README + architecture diagram, .gitignore, LICENSE, CI (JVM+Py+Node), docker-compose, Makefile.
-- [ ] **S2 — Git + GitHub**: git init, create public repo Sizbei/hyrax-labs, push.
-- [ ] **S3 — Review loop #1**: 3 parallel reviewers (code quality / build+CI / resume-integrity) → fix → re-review until sign-off.
-- [ ] **S4 — Demo layer**: one-command end-to-end demo (ingestion → backend → dashboard), captured output/screenshots.
-- [ ] **S5 — CI green**: confirm GitHub Actions pass; harden + polish.
-- [ ] **S6 — Final sign-off**: final review, demo instructions, DEMO.md.
+- [x] **S1 — Monorepo glue**: root README + architecture diagram, .gitignore, LICENSE, CI (JVM+Py+Node), docker-compose, Makefile. DONE.
+- [x] **S2 — Git + GitHub**: git init, create public repo Sizbei/hyrax-labs, push. DONE → https://github.com/Sizbei/hyrax-labs
+- [x] **S3 — Review loop #1**: 3 parallel reviewers ran. Verdicts: code SHIP, CI WILL-PASS (confirmed green), integrity FIX-BEFORE-PUBLISH (DEMO.md). Fixes applied (round 1):
+      - backend: supervisorScope + broaden catch (rethrow CancellationException) for true failure isolation + new test.
+      - python: parse_resolution mixed-token bug fixed (explicit dims win over k-shorthand) + hoisted alias constant + 3 new tests (52 total).
+      - dashboard: removed dead sourceRef. lint/build/test green.
+      - docs: softened "distributed pipeline" framing. Added DEMO.md + 3 Dockerfiles + .dockerignores; fixed compose port 8787→4000.
+      RE-REVIEW pending (round 2).
+- [x] **S4 — Demo layer**: `make demo` + scripts/demo.sh + DEMO.md with real captured output. DONE.
+- [x] **S5 — CI green**: round-1 push CI passed all 3 jobs (JVM on real JDK17). Re-verify after fix push.
+- [ ] **S6 — Final sign-off**: round-2 review until clean, then final.
 
 ## Service status (pre-existing, verified)
 - backend-jvm: Kotlin+Java, Gradle 8.7 wrapper (real jar), 26 tests. NOT locally built (no JDK) — CI builds it.

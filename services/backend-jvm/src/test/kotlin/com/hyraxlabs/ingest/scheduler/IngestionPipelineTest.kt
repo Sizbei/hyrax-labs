@@ -61,4 +61,23 @@ class IngestionPipelineTest {
         assertEquals(JobStatus.FAILED, broken.status)
         assertEquals("feed offline", broken.errorMessage)
     }
+
+    @Test
+    fun `an unexpected runtime error in a partner is also isolated`() = runTest {
+        // Not a declared PartnerApiException — a stray runtime fault (e.g. a real
+        // HTTP client throwing). It must still be contained, not abort the cycle.
+        val exploding = object : PartnerApiClient {
+            override val source = "exploding-feed"
+            override fun fetchRecords(): List<SupplierRecord> =
+                throw IllegalStateException("unexpected NPE-style fault")
+        }
+        val queue = JobQueue()
+        val registry = PartnerRegistry.of(SampleAlphaPartnerClient(), exploding)
+        val materials = pipeline(registry, queue).runCycle()
+
+        assertTrue(materials.isNotEmpty(), "healthy partner must still yield materials")
+        val broken = queue.snapshot().first { it.partnerSource == "exploding-feed" }
+        assertEquals(JobStatus.FAILED, broken.status)
+        assertEquals("unexpected NPE-style fault", broken.errorMessage)
+    }
 }

@@ -41,6 +41,23 @@ def _normalize_token(value: str) -> str:
     return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
+# Precomputed once: every (normalized-alias, map-type) pair, longest alias first,
+# so a specific alias like "basecolor" is matched before a short one like "col".
+_ORDERED_ALIASES: tuple[tuple[str, MapType], ...] = tuple(
+    (_normalize_token(alias), mtype)
+    for alias, mtype in sorted(
+        (
+            (alias, mtype)
+            for mtype, aliases in _MAP_ALIASES.items()
+            for alias in aliases
+        ),
+        key=lambda pair: len(_normalize_token(pair[0])),
+        reverse=True,
+    )
+    if _normalize_token(alias)
+)
+
+
 def classify_map_type(label: str, url: str = "") -> MapType:
     """Classify a texture into a canonical PBR map type.
 
@@ -51,23 +68,12 @@ def classify_map_type(label: str, url: str = "") -> MapType:
     label_norm = _normalize_token(label)
     url_norm = _normalize_token(url)
 
-    ordered = sorted(
-        (
-            (alias, mtype)
-            for mtype, aliases in _MAP_ALIASES.items()
-            for alias in aliases
-        ),
-        key=lambda pair: len(pair[0]),
-        reverse=True,
-    )
-
-    for alias, mtype in ordered:
-        token = _normalize_token(alias)
-        if token and token in label_norm:
+    # _ORDERED_ALIASES is precomputed once (longest-first) at import time.
+    for token, mtype in _ORDERED_ALIASES:
+        if token in label_norm:
             return mtype
-    for alias, mtype in ordered:
-        token = _normalize_token(alias)
-        if token and token in url_norm:
+    for token, mtype in _ORDERED_ALIASES:
+        if token in url_norm:
             return mtype
     return MapType.UNKNOWN
 
@@ -87,14 +93,21 @@ def parse_resolution(raw: str | None) -> int | None:
     if text in _RESOLUTION_SHORTHAND:
         return _RESOLUTION_SHORTHAND[text]
 
-    nums = [int(n) for n in re.findall(r"\d+", text)]
-    if not nums:
-        return None
-    # If shorthand like "4k" was embedded, expand it.
-    shorthand = re.search(r"(\d+)\s*k\b", text)
+    # Explicit pixel dimensions win when present, e.g. "4096x4096",
+    # "1920 x 1080", or a bare "4096". A "k"-shorthand token (the 2 in "2k") is
+    # NOT an explicit dimension, so a stray "2k thumb" can't override real dims.
+    explicit = [
+        int(m.group(1))
+        for m in re.finditer(r"(\d+)(?!\s*k\b)", text)
+    ]
+    if explicit:
+        return max(explicit)
+
+    # Otherwise fall back to "<n>k" shorthand anywhere in the string.
+    shorthand = re.search(r"\b(\d+)\s*k\b", text)
     if shorthand:
         return int(shorthand.group(1)) * 1024
-    return max(nums)
+    return None
 
 
 def parse_physical_size_cm(raw: str | None) -> float | None:
