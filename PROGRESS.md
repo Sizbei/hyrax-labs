@@ -16,7 +16,7 @@ Integrity rule: synthetic/sample data only; no real proprietary code, vendor nam
       RE-REVIEW pending (round 2).
 - [x] **S4 — Demo layer**: `make demo` + scripts/demo.sh + DEMO.md with real captured output. DONE.
 - [x] **S5 — CI green**: round-1 push CI passed all 3 jobs (JVM on real JDK17). Re-verify after fix push.
-- [ ] **S6 — Final sign-off**: round-2 review until clean, then final.
+- [x] **S6 — Round-2 review**: code SHIP (all 4 fixes verified, no regressions), integrity caught 1 remaining unqualified "distributed pipeline" in root README table → fixed both root + backend README wording. Re-review pending (round 3).
 
 ## Service status (pre-existing, verified)
 - backend-jvm: Kotlin+Java, Gradle 8.7 wrapper (real jar), 26 tests. NOT locally built (no JDK) — CI builds it.

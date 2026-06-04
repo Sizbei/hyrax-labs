@@ -2,10 +2,10 @@
 
 A small JVM backend microservice that ingests **supplier material** records from
 third-party partner APIs, normalizes them into a canonical model, deduplicates
-across partners, and runs the work as **asynchronous, scheduled jobs**. The
-ingestion stage models a distributed pipeline: each partner feed is processed
-concurrently as an independent, individually-tracked, failure-isolated job
-(here via Kotlin coroutines and structured concurrency).
+across partners, and runs the work as **asynchronous, scheduled jobs**. Each
+partner feed is processed **concurrently** as an independent, individually-tracked,
+failure-isolated job using **Kotlin coroutines and structured concurrency** — the
+pipeline-oriented design that scales out to a distributed worker pool.
 
 It is written in a mix of **Kotlin** (service logic, domain models, scheduler,
 partner-client interfaces) and **Java** (a legacy-style partner client, a DTO,
