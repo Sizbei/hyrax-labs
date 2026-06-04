@@ -61,6 +61,27 @@ body {
   letter-spacing: 0.04em;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.source-link {
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.source-link:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
 .status {
   display: flex;
   align-items: center;

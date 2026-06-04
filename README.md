@@ -5,6 +5,12 @@ the open web and third-party partner APIs, normalize it into a canonical
 **PBR-texture catalog** (Physically Based Rendering maps), and surface content
 performance through a **real-time analytics dashboard**.
 
+### ▶ Live demo: **https://sizbei.github.io/hyrax-labs/**
+
+The dashboard runs live in your browser (real-time D3 charts, 18 metrics across
+120 assets). No backend required — the same deterministic generator the API uses
+runs client-side, so the numbers are identical but synthetic.
+
 > **Representative portfolio scaffold.** This repository demonstrates the
 > architecture and engineering practices behind a materials-data platform.
 > **All data is synthetic** — there are no real partner names, API endpoints,
@@ -13,6 +19,8 @@ performance through a **real-time analytics dashboard**.
 > generated deterministically from a seed. Everything builds and runs offline.
 
 [![CI](https://github.com/Sizbei/hyrax-labs/actions/workflows/ci.yml/badge.svg)](https://github.com/Sizbei/hyrax-labs/actions/workflows/ci.yml)
+[![Deploy dashboard](https://github.com/Sizbei/hyrax-labs/actions/workflows/deploy-dashboard.yml/badge.svg)](https://github.com/Sizbei/hyrax-labs/actions/workflows/deploy-dashboard.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-online-22c55e)](https://sizbei.github.io/hyrax-labs/)
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9-7F52FF?logo=kotlin&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)

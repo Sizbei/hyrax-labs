@@ -6,7 +6,9 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import type { Asset, AssetMetricSnapshot, MetricDef } from "./types";
-import { api, type SnapshotResponse } from "./api/client";
+import { IS_STATIC, api, type SnapshotResponse } from "./api/client";
+
+const REPO_URL = "https://github.com/Sizbei/hyrax-labs";
 import { useLiveStream } from "./api/useLiveStream";
 import { KpiCard } from "./components/KpiCard";
 import { MetricSelect } from "./components/MetricSelect";
@@ -68,9 +70,14 @@ export default function App() {
   if (loadError) {
     return (
       <div className="app-error" role="alert">
-        <h1>Could not reach the metrics API</h1>
+        <h1>Could not load metrics</h1>
         <p>{loadError}</p>
-        <p>Start the synthetic API with <code>npm run server</code> (or <code>npm run dev</code>).</p>
+        {!IS_STATIC && (
+          <p>
+            Start the synthetic API with <code>npm run server</code> (or{" "}
+            <code>npm run dev</code>).
+          </p>
+        )}
       </div>
     );
   }
@@ -85,8 +92,13 @@ export default function App() {
             <span className="synthetic-badge">SYNTHETIC DATA</span>
           </p>
         </div>
-        <div className={`status status-${status}`} data-testid="stream-status">
-          <span className="dot" /> {status === "live" ? "Live" : status === "connecting" ? "Connecting…" : "Reconnecting…"}
+        <div className="header-right">
+          <div className={`status status-${status}`} data-testid="stream-status">
+            <span className="dot" /> {status === "live" ? "Live" : status === "connecting" ? "Connecting…" : "Reconnecting…"}
+          </div>
+          <a className="source-link" href={REPO_URL} target="_blank" rel="noreferrer noopener">
+            View source ↗
+          </a>
         </div>
       </header>
 
