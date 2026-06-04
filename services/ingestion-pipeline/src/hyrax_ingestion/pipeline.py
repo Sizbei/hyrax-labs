@@ -14,6 +14,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from hyrax_ingestion.asset_seed import write_asset_seed
 from hyrax_ingestion.catalog import write_catalog
 from hyrax_ingestion.extract import extract_materials
 from hyrax_ingestion.fetchers.base import Fetcher, FetchResult
@@ -128,6 +129,15 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=4,
         help="Concurrent fetch workers (default: %(default)s).",
     )
+    parser.add_argument(
+        "--asset-seed",
+        metavar="PATH",
+        default=None,
+        help=(
+            "Also write a metrics-dashboard-compatible asset seed (JSON) to PATH, "
+            "mapping each material to a dashboard content asset."
+        ),
+    )
     return parser
 
 
@@ -145,7 +155,7 @@ def main(argv: list[str] | None = None) -> int:
         print(str(exc), file=sys.stderr)
         return 2
 
-    _, result = run_pipeline(
+    materials, result = run_pipeline(
         sources,
         fetcher=fetcher,
         catalog_path=args.output,
@@ -155,6 +165,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"backend={args.fetcher} {result.as_summary()}")
     if result.catalog_path:
         print(f"catalog written to {result.catalog_path}")
+
+    if args.asset_seed:
+        seed_path = write_asset_seed(materials, args.asset_seed)
+        print(f"dashboard asset seed written to {seed_path} ({len(materials)} assets)")
+
     for err in result.errors:
         print(f"  ! {err}", file=sys.stderr)
 
