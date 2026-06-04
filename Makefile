@@ -45,6 +45,15 @@ ingest: ## Run the ingestion pipeline over fixtures -> catalog.json
 dashboard: ## Start the dashboard (API + web) at http://localhost:5173
 	cd $(DASHBOARD) && npm run dev
 
+.PHONY: seed-dashboard
+seed-dashboard: ## Generate the dashboard asset seed from the ingestion pipeline
+	cd $(INGEST) && hyrax-ingest --fetcher soup --output catalog.json \
+		--asset-seed ../metrics-dashboard/public/assets-seed.json
+
+.PHONY: dashboard-static
+dashboard-static: seed-dashboard ## Build + preview the static (serverless) dashboard
+	cd $(DASHBOARD) && VITE_STATIC=1 npm run build && npm run preview
+
 # ── Test ──────────────────────────────────────────────────────
 .PHONY: test
 test: test-backend test-ingest test-dashboard ## Run all test suites

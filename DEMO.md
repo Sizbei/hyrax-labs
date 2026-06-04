@@ -4,6 +4,11 @@ A guided walkthrough of the three services. Everything runs **offline** with
 **synthetic data**. The fastest path is `make demo`; the sections below show what
 each stage does and the real output it produces.
 
+> **Live dashboard (no setup):** https://sizbei.github.io/hyrax-labs/
+> The deployed site runs the dashboard in static mode and is **seeded with the
+> ingestion pipeline's actual output** — the content assets you see are the
+> scraped supplier-material names flowing through to the analytics view.
+
 ```bash
 make demo        # runs ingestion → backend → dashboard, then opens the dashboard
 ```
@@ -56,6 +61,16 @@ catalog record:
 Swap the backend with `--fetcher playwright|selenium|crawlee` — those adapters are
 real but guarded behind optional extras (`pip install "hyrax-ingestion[playwright]"`).
 Without the extra they print an actionable install message rather than crashing.
+
+**Feeding the dashboard.** The pipeline can also emit a dashboard-compatible
+asset seed so the scraped materials become the dashboard's content assets — this
+is the cross-service link used to seed the live site:
+
+```bash
+hyrax-ingest --fetcher soup --output catalog.json \
+  --asset-seed ../metrics-dashboard/public/assets-seed.json
+# dashboard asset seed written to ../metrics-dashboard/public/assets-seed.json (10 assets)
+```
 
 ---
 

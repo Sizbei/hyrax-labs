@@ -62,6 +62,12 @@ into the same canonical model (normalizing, deduplicating, and scheduling the wo
 asynchronously), and the dashboard visualizes engagement across the resulting
 catalog of assets in real time.
 
+The pipeline and dashboard are wired together end-to-end:
+`hyrax-ingest --asset-seed` maps scraped materials onto the dashboard's asset
+shape, and the [live site](https://sizbei.github.io/hyrax-labs/) is seeded with
+that real pipeline output — the supplier-material names you see on the dashboard
+came through the ingestion stage.
+
 ---
 
 ## Services
