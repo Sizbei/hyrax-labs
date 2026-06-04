@@ -36,8 +36,8 @@ jobs:
         with:
           python-version: "3.11"
       - name: Generate asset seed from the ingestion pipeline
+        working-directory: ${{ github.workspace }}/services/ingestion-pipeline
         run: |
-          cd services/ingestion-pipeline
           pip install -e .
           hyrax-ingest --fetcher soup \
             --output /tmp/catalog.json \
