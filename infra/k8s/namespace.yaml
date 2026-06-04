@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hyrax-labs
+  labels:
+    app.kubernetes.io/part-of: hyrax-labs
+    app.kubernetes.io/managed-by: kustomize

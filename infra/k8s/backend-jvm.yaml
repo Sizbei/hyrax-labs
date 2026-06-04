@@ -1,0 +1,91 @@
+# backend-jvm -- core JVM service (Spring Boot style). Consumes Kafka ingest
+# events, persists to Postgres, caches in Redis. Exposes HTTP on :8081 with a
+# Spring-Actuator-style health endpoint at /healthz.
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-jvm
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: backend-jvm
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  selector:
+    app.kubernetes.io/name: backend-jvm
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-jvm
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: backend-jvm
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backend-jvm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: backend-jvm
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/part-of: hyrax-labs
+    spec:
+      containers:
+        - name: backend-jvm
+          # Placeholder image -- CI does not push. See README.
+          image: ghcr.io/sizbei/hyrax-backend-jvm:latest
+          ports:
+            - name: http
+              containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: hyrax-config
+          env:
+            - name: SERVER_PORT
+              value: "8081"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_PASSWORD
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: REDIS_PASSWORD
+            # Assembled JDBC URL pointing at the postgres Service DNS name.
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/hyrax"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 45
+            periodSeconds: 15

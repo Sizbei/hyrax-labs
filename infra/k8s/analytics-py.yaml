@@ -1,0 +1,95 @@
+# analytics-py -- Django service (:8000) serving aggregate analytics over the
+# material catalog. Reads from Postgres + MongoDB. Health at /api/health.
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-py
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: analytics-py
+    app.kubernetes.io/component: analytics
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  selector:
+    app.kubernetes.io/name: analytics-py
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-py
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: analytics-py
+    app.kubernetes.io/component: analytics
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: analytics-py
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: analytics-py
+        app.kubernetes.io/component: analytics
+        app.kubernetes.io/part-of: hyrax-labs
+    spec:
+      containers:
+        - name: analytics-py
+          # Placeholder image -- CI does not push. See README.
+          image: ghcr.io/sizbei/hyrax-analytics-py:latest
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: hyrax-config
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_PASSWORD
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: MONGODB_USER
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: MONGODB_PASSWORD
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: DJANGO_SECRET_KEY
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "256Mi"
+            limits:
+              cpu: "750m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15

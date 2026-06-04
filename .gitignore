@@ -35,6 +35,20 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 
+# ── Native tools (tools/) — compiled binaries & objects ───────
+tools/pbr_pack/pbr_pack
+tools/texhash/texhash
+*.o
+*.obj
+*.out
+
+# ── Go (services/catalog-api-go) ──────────────────────────────
+*.test
+
+# ── Django (services/analytics-py) — local DB ─────────────────
+*.sqlite3
+db.sqlite3
+
 # ── Generated demo artifacts ──────────────────────────────────
 catalog.json
 catalog.jsonl

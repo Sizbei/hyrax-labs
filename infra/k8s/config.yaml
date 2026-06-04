@@ -1,0 +1,35 @@
+# Non-secret, environment-level configuration shared across services.
+# Service hostnames use in-cluster DNS: <service>.<namespace>.svc.cluster.local
+# (short form <service> works within the same namespace).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hyrax-config
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/part-of: hyrax-labs
+data:
+  # --- Backing service coordinates (host/port only; credentials live in the Secret) ---
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "hyrax"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  MONGODB_HOST: "mongodb"
+  MONGODB_PORT: "27017"
+  MONGODB_DB: "hyrax_materials"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_TOPIC_INGEST: "material.ingest"
+  # --- Application tuning ---
+  LOG_LEVEL: "info"
+  ENVIRONMENT: "reference"
+  # catalog-api-go ports
+  CATALOG_REST_PORT: "8080"
+  CATALOG_GRAPHQL_PATH: "/graphql"
+  # analytics-py (Django)
+  DJANGO_SETTINGS_MODULE: "analytics.settings"
+  DJANGO_ALLOWED_HOSTS: "*"
+  # metrics-dashboard
+  DASHBOARD_API_PORT: "4000"
+  DASHBOARD_WEB_PORT: "5173"
+  DASHBOARD_API_URL: "http://metrics-dashboard:4000"

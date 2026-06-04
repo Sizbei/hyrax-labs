@@ -1,45 +1,33 @@
 # Project Status
 
-A representative materials-data platform monorepo. All data is synthetic; the
-whole platform builds and runs offline.
+A representative materials-data platform monorepo demonstrating a full backend
+stack. All data is synthetic; the whole platform builds and runs offline.
 
-## Status: ✅ complete, green & deployed
+## Status: deployed + expanding to full skill coverage
 
-**Live dashboard:** https://sizbei.github.io/hyrax-labs/ (auto-deploys on push via
-GitHub Pages; static build, seeded with real ingestion-pipeline output).
+**Live dashboard:** https://sizbei.github.io/hyrax-labs/
 
-| Stage | Status |
-|-------|--------|
-| Three services (backend-jvm, ingestion-pipeline, metrics-dashboard) | ✅ built + tested |
-| Monorepo glue (README, CI, Makefile, docker-compose) | ✅ |
-| Public on GitHub, CI green on every push | ✅ |
-| End-to-end demo (`make demo`, `DEMO.md`) | ✅ |
-| Containerized demo (`docker compose up --build`) | ✅ |
-| Multi-reviewer audit (code quality · build/CI · integrity) | ✅ signed off |
+## In progress: full resume-skill coverage (every claimed tech as real code)
 
-## Tests
+Adding genuine, working components for each resume-listed technology so the repo
+demonstrates everything the resumes claim — no stubs.
 
-- `backend-jvm` — 27 JUnit 5 / kotlin.test (Gradle, JDK 17)
-- `ingestion-pipeline` — 56 pytest
-- `metrics-dashboard` — 27 Vitest
+- [ ] **Go** — `services/catalog-api-go`: real Go microservice (catalog API).
+- [ ] **SQL / PostgreSQL** — real schema + queries wired into the Go service.
+- [ ] **Redis** — real caching layer in the Go service.
+- [ ] **Kafka** — real producer/consumer (event bus) in the Go service.
+- [ ] **GraphQL** — real GraphQL API layer.
+- [ ] **MongoDB** — real document store usage.
+- [ ] **Django** — `services/analytics-py`: real Django service.
+- [ ] **Kubernetes** — `infra/k8s`: valid manifests for all services.
+- [ ] **C/C++** — `tools/`: real native utility.
+- [ ] **Ruby** — `tools/`: real utility/script.
+- [ ] **SKILLS.md** — skill → file/line evidence map.
+- [ ] **Live Skills page** — rendered on the deployed dashboard site.
 
-Run everything with `make test`.
+## Already demonstrated (verified)
 
-## End-to-end flow
-
-`hyrax-ingest --asset-seed` maps scraped materials → dashboard assets; the live
-site is seeded with that output, so the dashboard's content assets are the real
-pipeline result. Locally: `make seed-dashboard` then `make dashboard-static`.
-
-## Quality bar
-
-The repo passed an iterative multi-agent review (code quality, buildability/CI,
-and integrity) with all findings resolved:
-
-- partner-feed ingestion is concurrent and failure-isolated via Kotlin structured
-  concurrency (a single bad feed never aborts a cycle);
-- resolution parsing prefers explicit pixel dimensions over shorthand;
-- all claims are scoped honestly (in-process concurrency, synthetic data);
-- no secrets, real vendor names, or fabricated production metrics anywhere.
-
-See [`DEMO.md`](DEMO.md) to run it.
+- Kotlin + Java (`services/backend-jvm`, 27 tests), coroutines, structured concurrency
+- Python + pydantic (`services/ingestion-pipeline`, 56 tests), 4-tool scraper adapters
+- React + TS + D3 (`services/metrics-dashboard`, 27 tests), SSE real-time, static SPA
+- Docker, GitHub Actions CI, end-to-end pipeline→dashboard seed flow, GitHub Pages deploy

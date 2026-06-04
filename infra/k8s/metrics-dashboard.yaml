@@ -1,0 +1,118 @@
+# metrics-dashboard -- web UI (:5173) plus a small node API (:4000) in one pod.
+# The web container proxies to the API; both expose /api/health.
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-dashboard
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: metrics-dashboard
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  selector:
+    app.kubernetes.io/name: metrics-dashboard
+  ports:
+    - name: web
+      port: 5173
+      targetPort: 5173
+    - name: api
+      port: 4000
+      targetPort: 4000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-dashboard
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: metrics-dashboard
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: metrics-dashboard
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: metrics-dashboard
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/part-of: hyrax-labs
+    spec:
+      containers:
+        # --- Web tier (Vite preview / static server on :5173) ---
+        - name: web
+          # Placeholder image -- CI does not push. See README.
+          image: ghcr.io/sizbei/hyrax-metrics-dashboard-web:latest
+          ports:
+            - name: web
+              containerPort: 5173
+          env:
+            - name: DASHBOARD_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: hyrax-config
+                  key: DASHBOARD_API_URL
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: web
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: web
+            initialDelaySeconds: 15
+            periodSeconds: 15
+        # --- API tier (node service on :4000) ---
+        - name: api
+          # Placeholder image -- CI does not push. See README.
+          image: ghcr.io/sizbei/hyrax-metrics-dashboard-api:latest
+          ports:
+            - name: api
+              containerPort: 4000
+          envFrom:
+            - configMapRef:
+                name: hyrax-config
+          env:
+            - name: PORT
+              value: "4000"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_PASSWORD
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: api
+            initialDelaySeconds: 15
+            periodSeconds: 15

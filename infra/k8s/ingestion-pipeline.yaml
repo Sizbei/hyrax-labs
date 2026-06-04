@@ -1,0 +1,61 @@
+# ingestion-pipeline -- batch scraper that runs on a schedule, normalizes
+# scraped material metadata, dedups textures, and publishes to Kafka + MongoDB.
+# Modeled as a CronJob (runs every 6 hours).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ingestion-pipeline
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: ingestion-pipeline
+    app.kubernetes.io/component: batch
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  schedule: "0 */6 * * *" # every 6 hours
+  concurrencyPolicy: Forbid # never overlap scraper runs
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 3600 # hard cap one run at 1h
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: ingestion-pipeline
+            app.kubernetes.io/component: batch
+            app.kubernetes.io/part-of: hyrax-labs
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: scraper
+              # Placeholder image -- CI does not push. See README.
+              image: ghcr.io/sizbei/hyrax-ingestion-pipeline:latest
+              command: ["python", "-m", "ingestion.run", "--once"]
+              envFrom:
+                - configMapRef:
+                    name: hyrax-config
+              env:
+                - name: MONGODB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: hyrax-secrets
+                      key: MONGODB_USER
+                - name: MONGODB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: hyrax-secrets
+                      key: MONGODB_PASSWORD
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: hyrax-secrets
+                      key: REDIS_PASSWORD
+              resources:
+                requests:
+                  cpu: "200m"
+                  memory: "256Mi"
+                limits:
+                  cpu: "1"
+                  memory: "512Mi"

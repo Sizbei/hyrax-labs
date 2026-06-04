@@ -1,0 +1,88 @@
+# catalog-api-go -- Go API exposing REST (:8080) and GraphQL (/graphql on :8080).
+# Reads the material catalog from Postgres, caches in Redis.
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-api-go
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: catalog-api-go
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  selector:
+    app.kubernetes.io/name: catalog-api-go
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-api-go
+  namespace: hyrax-labs
+  labels:
+    app.kubernetes.io/name: catalog-api-go
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: hyrax-labs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: catalog-api-go
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: catalog-api-go
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: hyrax-labs
+    spec:
+      containers:
+        - name: catalog-api-go
+          # Placeholder image -- CI does not push. See README.
+          image: ghcr.io/sizbei/hyrax-catalog-api-go:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: hyrax-config
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: POSTGRES_PASSWORD
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hyrax-secrets
+                  key: REDIS_PASSWORD
+            # Go-style DSN built from the postgres Service DNS name.
+            - name: DATABASE_URL
+              value: "postgres://postgres:5432/hyrax?sslmode=disable"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
