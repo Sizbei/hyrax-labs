@@ -119,7 +119,7 @@ reproducible and identical on every run.
 ## Run the test suites
 
 ```bash
-make test            # all three: JVM (26) + Python (49) + dashboard (22)
+make test            # all three: JVM (27) + Python (52) + dashboard (22)
 # or individually:
 make test-ingest
 make test-dashboard

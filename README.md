@@ -60,8 +60,8 @@ catalog of assets in real time.
 
 | Service | Stack | What it does | Tests |
 |---------|-------|--------------|-------|
-| [`backend-jvm`](services/backend-jvm) | Kotlin 1.9 + Java 17, Gradle, coroutines, JUnit 5 | Ingests supplier-material records from third-party partner APIs; normalizes, deduplicates, and runs the work as asynchronous, scheduled jobs — each partner feed processed concurrently and failure-isolated via structured concurrency. | 26 |
-| [`ingestion-pipeline`](services/ingestion-pipeline) | Python 3.11+, pydantic v2, pytest | Multi-tool scraping pipeline (Playwright · Crawlee · BeautifulSoup · Selenium adapters) that turns supplier listings into a normalized PBR-texture catalog. | 49 |
+| [`backend-jvm`](services/backend-jvm) | Kotlin 1.9 + Java 17, Gradle, coroutines, JUnit 5 | Ingests supplier-material records from third-party partner APIs; normalizes, deduplicates, and runs the work as asynchronous, scheduled jobs — each partner feed processed concurrently and failure-isolated via structured concurrency. | 27 |
+| [`ingestion-pipeline`](services/ingestion-pipeline) | Python 3.11+, pydantic v2, pytest | Multi-tool scraping pipeline (Playwright · Crawlee · BeautifulSoup · Selenium adapters) that turns supplier listings into a normalized PBR-texture catalog. | 52 |
 | [`metrics-dashboard`](services/metrics-dashboard) | React 18 + TypeScript + D3.js, Node/Express SSE, Vitest | Real-time content-performance dashboard tracking 18 engagement metrics across 120 synthetic assets with live D3 visualizations. | 22 |
 
 ---
