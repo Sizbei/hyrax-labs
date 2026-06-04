@@ -31,8 +31,9 @@ let assets: Asset[] = generated;
 
 /**
  * Try to load an ingestion-pipeline asset seed and prepend it to the generated
- * assets (kept to ASSET_COUNT total). No-ops if the file is absent or invalid.
- * Idempotent; safe to call once at startup.
+ * assets. The result is capped at max(ASSET_COUNT, seed length) so a normal
+ * (small) seed stays within the usual ~120-asset view. No-ops if the file is
+ * absent or invalid. Idempotent; safe to call once at startup.
  */
 export async function hydrateFromSeed(
   url = `${import.meta.env.BASE_URL}assets-seed.json`,

@@ -3,7 +3,10 @@
 A representative materials-data platform monorepo. All data is synthetic; the
 whole platform builds and runs offline.
 
-## Status: ✅ complete & green
+## Status: ✅ complete, green & deployed
+
+**Live dashboard:** https://sizbei.github.io/hyrax-labs/ (auto-deploys on push via
+GitHub Pages; static build, seeded with real ingestion-pipeline output).
 
 | Stage | Status |
 |-------|--------|
@@ -17,10 +20,16 @@ whole platform builds and runs offline.
 ## Tests
 
 - `backend-jvm` — 27 JUnit 5 / kotlin.test (Gradle, JDK 17)
-- `ingestion-pipeline` — 52 pytest
-- `metrics-dashboard` — 22 Vitest
+- `ingestion-pipeline` — 56 pytest
+- `metrics-dashboard` — 27 Vitest
 
 Run everything with `make test`.
+
+## End-to-end flow
+
+`hyrax-ingest --asset-seed` maps scraped materials → dashboard assets; the live
+site is seeded with that output, so the dashboard's content assets are the real
+pipeline result. Locally: `make seed-dashboard` then `make dashboard-static`.
 
 ## Quality bar
 

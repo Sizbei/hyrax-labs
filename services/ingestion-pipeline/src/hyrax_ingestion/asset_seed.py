@@ -34,8 +34,12 @@ def _asset_type_for(material: NormalizedMaterial) -> str:
 
 
 def _published_at(material: NormalizedMaterial) -> str:
-    """Derive a deterministic ISO publish date from the material hash."""
-    days = int(material.material_id[8:12] or "0", 16) % 365
+    """Derive a deterministic ISO publish date from the material hash.
+
+    `material_id` is a 16-char hex content-hash slice, so [8:12] is always four
+    valid hex digits; this is purely synthetic, not a real publish timestamp.
+    """
+    days = int(material.material_id[8:12], 16) % 365
     return (_EPOCH + timedelta(days=days)).date().isoformat()
 
 
